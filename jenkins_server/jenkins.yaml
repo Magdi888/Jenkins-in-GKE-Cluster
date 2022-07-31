@@ -20,9 +20,9 @@ spec:
         - containerPort: 8080
           name: http
         - containerPort: 50000
-          name: slavePort
+          name: slaveport
         volumeMounts:
-          - name: jenkins_home
+          - name: jenkins-home
             mountPath: /var/jenkins_home
           - name: docker-daemon
             mountPath: /var/run/docker.sock
@@ -43,7 +43,7 @@ spec:
               timeoutSeconds: 5
               failureThreshold: 3
       volumes:
-        - name: jenkins_home
+        - name: jenkins-home
           persistentVolumeClaim:
               claimName: jenkins-claim
         - name: docker-daemon
