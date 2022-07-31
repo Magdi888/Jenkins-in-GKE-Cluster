@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: jenkins-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      containers:
+      - name: jenkins
+        image: us.gcr.io/durable-spot-354112/jenkins_tools
+        ports:
+        - containerPort: 8080
+          name: http
+        - containerPort: 50000
+          name: slavePort
+        volumeMounts:
+          - name: jenkins_home
+            mountPath: /var/jenkins_home
+          - name: docker-daemon
+            mountPath: /var/run/docker.sock
+        livenessProbe:
+            httpGet:
+              path: "/login"
+              port: 8080
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+        readinessProbe:
+              httpGet:
+                path: "/login"
+                port: 8080
+              initialDelaySeconds: 60
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 3
+      volumes:
+        - name: jenkins_home
+          persistentVolumeClaim:
+              claimName: jenkins-claim
+        - name: docker-daemon
+          hostPath:
+            path: /var/run/docker.sock
+
+
+
+
