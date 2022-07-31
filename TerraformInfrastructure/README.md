@@ -1,46 +1,38 @@
-# GCP Project
+# GCP Infrastructure
 
-## Requirements:
 
-- The Application to be dockerized and pushed to GCR is on here: [Code](https://github.com/atefhares/DevOps-Challenge-Demo-Code)
-- Provision infrastructure on GCP with Terraform Consist of:
-  - VPC with two subnets:
-    - Management subnet has:
-      - Private VM.
-      - NAT gateway.
-    - Restricted subnet has:
-      - Private standard GKE cluster.
-- Deploy the application on the GKE cluster.
-- Deployment must be exposed to public internet with a public HTTP load balancer.
-
-## Description:
-
-- Restricted subnet must not have access to internet.
-- The VM must be private.
-- Deployment on GKE manually by kubectl tool.
-- Only the management subnet can connect to the GKE cluster.
-- Useing custom SA not the default one and attach it to our of GKE cluster nodes.
-
-# Steps:    
-
-## Dockerize Python Web App from [DevOps-Challenge-Demo-Code](https://github.com/atefhares/DevOps-Challenge-Demo-Code)
-
-- Dockerfile [Click here](https://github.com/Magdi888/GCP-Project/blob/master/App/Dockerfile)
-- Authenticate to push images to GCR
- ```
-   gcloud auth configure-docker
- ```
-- Build image and tag it with gcr hostname and tag redis image with the same hostname and push them.
- ```
-   docker build -t us.gcr.io/durable-spot-354112/webapp
-   docker tag redis:5.0-alpine us.gcr.io/durable-spot-354112/redis
-   docker push us.gcr.io/durable-spot-354112/webapp
-   docker push us.gcr.io/durable-spot-354112/redis
- ```
 ## Provision infrastructure on GCP with Terraform.
 
+
+### Description:
+- VPC with two subnetworks in the same region, management subnetwork and restricted subnetwork.
+- The two subnetworks can access internet from Cloud NAT.
+- The management subnetwork has a private VM.
+- Create service account for the private VM and attach ContainerAdmin role to it to manage the GKE cluster through it.
+- Install gcloud cli and kubectl on the private VM with startup [Script](https://github.com/Magdi888/Jenkins-in-GKE-Cluster/blob/master/TerraformInfrastructure/config_gcloud.sh)
+- The restricted subnetwork has a private GKE cluster and the node pool.
+- Create service account for the the nodes and attach ObjectViewer role to it so we can pull images from GCR
+- The nodes image type is ubuntu with docker.
+- The restricted subnetwork has two secondary ip rangs one is assigned to pods_CIDR and the other one for services_CIDR.
+- Firewall to allow ssh to the private VM.
+- Define the variables used in variables.tf file.
+- Assigne values to the variables in def.tfvars.
+- Package all network component in network module [Network Module](https://github.com/Magdi888/Jenkins-in-GKE-Cluster/tree/master/TerraformInfrastructure/network)
+- Package all GKE cluster component in K8s module [K8s Module](https://github.com/Magdi888/Jenkins-in-GKE-Cluster/tree/master/TerraformInfrastructure/K8s_module)
+
+
+### Infrastructure Digram
+![image](https://user-images.githubusercontent.com/91858017/182043708-099c4ac0-223c-40ab-8873-cf05f344a709.png)
+
+
+### Steps:
+
 - Create Bucket to save Terraform state file.
+ ```
+  gsutil mb -c standard -b on -p [Project ID] gs://[Bucket Name]
+ ```
 - Set the bucket name in backend.tf file.
+
 - Run the following:
  ```
   # Initialization terraform
@@ -54,8 +46,8 @@
   # Apply Our Plan
    terraform apply --var-file dev.tfvars
  ```
-### Infrastructure
-![Untitled Diagram-Page-1](https://user-images.githubusercontent.com/91858017/180895752-124e12ca-59be-45e2-828f-b6d03ed41856.jpg)
+
+
 - Connect to Private VM with ssh.
  ```
    gcloud compute ssh [machine name]
@@ -64,25 +56,7 @@
  ```
   gcloud container clusters get-credentials [GKE name] --zone [used zone] --project [ProjectId]
  ```
-## Deploying Our App on [K8s resources](https://github.com/Magdi888/GCP-Project/tree/master/K8s_resources)
-- Copy K8s_resources directory to VM
-- Run command:
- ```
-  kubectl create namespace dev
-  kubectl apply -Rf ./K8s_resources -n dev
- ```
-### Web App Structure
-![Untitled Diagram-Page-2 drawio (1)](https://user-images.githubusercontent.com/91858017/180895495-b349a142-4c8a-4f17-96d6-7b0464400202.png)
-- Get Web App IP
- ```
-  kubectl get ingress
- ```
- ![image](https://user-images.githubusercontent.com/91858017/180893839-4b21f18e-750b-4e5d-a6a9-d9cee54701e0.png)
 
-- Visit Ingress Address:Port [34.110.182.92:80]
-
- ![image](https://user-images.githubusercontent.com/91858017/180894183-abd569d1-3907-4f2a-922e-350d6584deb8.png)
- 
  
 
 
