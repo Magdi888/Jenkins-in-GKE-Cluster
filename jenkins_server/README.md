@@ -6,7 +6,7 @@
 ## Steps:
 
 - Build image form jenkins/jenkins:lts and add to it [Dockerfile](https://github.com/Magdi888/Jenkins-in-GKE-Cluster/blob/master/jenkins_server/jenkinsDokerfile)
-  - Docker
+  - Docker CLI
   - Terraform
   - Ansible
   - Kubectl
