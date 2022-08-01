@@ -19,32 +19,21 @@
   docker push us.gcr.io/us.gcr.io/durable-spot-354112/jenkins_tools
  ```
 - Create Namespace for the jenkins server:
- ```
-  kubectl apply -f namespace.yaml
- ```
+ 
  - Create Service account for Jenkins in jenkins-server namespace with yaml [File](https://github.com/Magdi888/Jenkins-in-GKE-Cluster/blob/master/jenkins_server/serviceAccount.yaml)
-  ```
-   kubectl apply -f serviceAccount.yaml
-  ```
+  
  - Create Cluster role contains rules that represent a set of permissions, Permissions are full control of all resouces of apiGroups:
    - Core apiGroup
    - App apiGroup
    - networking.k8s.io/v1 apiGroup
  - Create Cluster role binding to grant the permissions in the cluster role to the service account.
-  ```
-   # Create the ClusterRole and ClusterRoleBinding
-    kubectl apply -f clusterroleAndBinding.yaml
-  ```
+  
  - Create StorageClass that will create persistent volumes in respect of persistent volumes claim.The storageClass provisioner is kubernetes.io/gce-pd
    that will create GCEPersistentDisk as a persistent volume.
    * Reference: [Storage Class](https://kubernetes.io/docs/concepts/storage/storage-classes/#gce-pd)
-  ```
-    kubectl apply -f storageClass.yaml
-  ```
+  
  - Create persistent volumes claim to claim the persistent volumes.
-   ```
-    kubectl apply -f jenkins_pvc.yaml
-   ```
+   
  - Create Jenkins Deployment:
    - Namespace jenkins-server namespace
    - The image is that we pushed it to GCR.
@@ -55,10 +44,7 @@
    - Define readinessProbe for the container so the application will accept the traffic after period of time.
    - Define livenessProbe for the container so if the application is running but unable to make progress, Container will be restarted.
      *  Reference: [LivenessProbe and ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes)
-   ```
-    # Deploy the Henkins deployment
-     kubectl apply -f jenkins.yaml
-   ```
+   
  - Create Service with type LoadBalancer to expose the jenkins server to the internet.
  
 ## The Jenkins Server will be deployed through the private VM, We provisioned []()
