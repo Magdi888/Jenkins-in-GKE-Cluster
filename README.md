@@ -15,7 +15,7 @@
  
  ### Jenkins Server Setup:
  <p align='center'>
- <a href="https://github.com/Magdi888/Jenkins-in-GKE-Cluster/tree/master/TerraformInfrastructure"><img src="https://user-images.githubusercontent.com/91858017/182043154-d2f4b8db-78db-4479-88eb-992fa8c76f64.png" width="150"/></a>
+ <a href="https://github.com/Magdi888/Jenkins-in-GKE-Cluster/tree/master/jenkins_server"><img src="https://user-images.githubusercontent.com/91858017/182043154-d2f4b8db-78db-4479-88eb-992fa8c76f64.png" width="150"/></a>
  </p>
  
  
