@@ -59,5 +59,37 @@
     # Deploy the Henkins deployment
      kubectl apply -f jenkins.yaml
    ```
+ - Create Service with type LoadBalancer to expose the jenkins server to the internet.
  
+## The Jenkins Server will be deployed through the private VM, We provisioned []()
+
+- Copy the directory of the Jenkins-server to the private VM using gcloud command:
+ ```
+  gcloud compute scp --recurse jenkins_server [machine name]:/Path/to/save
+ ```
+- Connect to the Private VM:
+ ```
+   gcloud compute ssh [machine name]
+ ```
+- Provision Jenkins server by running:
+ ```
+  kubectl apply -Rf ./[jenkins-server directory]
+ ```
+- Get the initial admin password of the Jenkins server by watch the logs of the jenckins container:
+ ```
+  # get the name of the jenkins pod
+   kubectl get pods -n jenkins-server
+  # look at the logs 
+   kubectl logs [jenkins pod name] -n jenkins-server
+ ```
+![image](https://user-images.githubusercontent.com/91858017/182203496-cca042dc-aec8-4ebe-8f15-93e09a5acca7.png)
+- Get the ip of the Jenkins server by get the externat-IP of the jenkins service:
+ ```
+ # Get the externat-IP of the jenkins service
+  kubectl get svc -n jenkins-server
+ ```
+ ![image](https://user-images.githubusercontent.com/91858017/182205456-e94da5ff-c9a3-4ec0-9533-d886a1019c02.png)
+- Visit the External-IP:[service port]
+![image](https://user-images.githubusercontent.com/91858017/182205987-ce521912-6ee8-430d-90c8-b3ccc5562701.png)
+
  
