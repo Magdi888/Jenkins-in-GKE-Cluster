@@ -20,7 +20,7 @@
  ```
 - Create Namespace for the jenkins server:
  ```
-  kubectl create ns jenkins-server
+  kubectl apply -f namespace.yaml
  ```
  - Create Service account for Jenkins in jenkins-server namespace with yaml [File](https://github.com/Magdi888/Jenkins-in-GKE-Cluster/blob/master/jenkins_server/serviceAccount.yaml)
   ```
